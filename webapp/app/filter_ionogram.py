@@ -73,10 +73,6 @@ def filter_ionograms(dirs1, data, f, DataDict, normalize_by_frequency=True):
 
     print(data)
 
-    
-
-    
-
     if file_name.startswith("lfm"):
         if not file_name.endswith(".done"):
             # print("File name inside loop", f)

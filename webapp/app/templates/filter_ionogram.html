@@ -17,8 +17,13 @@
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
           <h3 class="text-center Ionosonde-list">Filtered LFM files Associated to {{name.name_of_transmitter}} Transmitter</h3>
+          
+
+          
+          
         </div>
       </div>
+      <div id="result"></div>
 
     <div class="table-format">
         <table width="100%" class="table m-4">
@@ -40,7 +45,13 @@
                     <td>{{name.receiver_code}}</td>
                     <td>{{date}}</td>
                     <td><a href="/static/{{i}}" class="">{{i}}</a></td>
-                    <td><img src="/static/images/newiono.png" alt="" width="50" height="50"></td>
+                    <td><a href="/static/{{date}}/{{i|slice:':-2'|add:'png'}}">
+
+                        <img src="/static/images/newiono.png" alt="" width="50" height="50">
+
+                    </a></td>
+
+                    
                     
                     
                 </tr> 
@@ -49,10 +60,22 @@
             </tbody>
         </table>
     </div>
-
+    {% if isComplete %}
+    <h1>Django</h1>
+    {% endif %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
+        <script>
+            if(typeof(EventSource) !== "undefined") {
+              var source = new EventSource("filter-ionograms/2021-01-04/3/");
+              source.onmessage = function(event) {
+                document.getElementById("result").innerHTML += event.data + "<br>";
+              };
+            } else {
+              document.getElementById("result").innerHTML = "Sorry, your browser does not support server-sent events...";
+            }
+            </script>
 </body>
 
 </html>

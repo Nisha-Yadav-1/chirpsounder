@@ -19,6 +19,125 @@
   <div class="row mt-5">
     <div class="col-md-6 offset-md-3">
       <h3 class="text-center Ionosonde-list">Ionosonde Locations</h3>
+      <input type="hidden" value={{id}} id="transmitter_id">
+    </div>
+  </div>
+
+
+
+  {% if flag %}
+  <form action="/search_by_codes" method="post">
+    <div class="row">
+        <div class="col-4 offset-md-2">
+
+            {% csrf_token %}
+            {% if tx_code == 'CVAQ' %}
+            <select class="form-select shadow-none" aria-label="Default select example" name="tx_code">
+                <option selected>Choose TX Code</option>
+                <option value="{{tx_code}}" selected>{{tx_code}}</option>
+                <option value="TXC">TXC</option>
+                <option value="PRC">PRC</option>
+            </select>
+
+            {% elif tx_code == 'TXC' %}
+            <select class="form-select shadow-none" aria-label="Default select example" name="tx_code">
+                <option selected>Choose TX Code</option>
+                <option value="{{tx_code}}" selected>{{tx_code}}</option>
+                <option value="PRC">PRC</option>
+                <option value="CVAQ">CVAQ</option>
+            </select>
+
+
+            {% elif tx_code == 'PRC' %}
+            <select class="form-select shadow-none" aria-label="Default select example" name="tx_code">
+                <option selected>Choose TX Code</option>
+                <option value="{{tx_code}}" selected>{{tx_code}}</option>
+                <option value="TXC">TXC</option>
+                <option value="CVAQ">CVAQ</option>
+            </select>
+
+            {% else %}
+            <select class="form-select shadow-none" aria-label="Default select example" name="tx_code">
+                <option selected>Choose TX Code</option>
+                <option value="TX_CODE">TXC</option>
+                <option value="CVAQ">CVAQ</option>
+                <option value="PRC">PRC</option>
+            </select>
+            {% endif %}
+
+            <select class="form-select mt-2 shadow-none" aria-label="Default select example" name="rx_code">
+                <option selected>Choose RX Code</option>
+                <option value="1">W2NAF</option>
+
+            </select>
+
+
+
+
+        </div>
+        <div class="col-4">
+
+            {% if filtered_data.start_date %}
+
+            <label for="exampleFormControlInput1" class="form-label">Start Date:</label>
+            <input type="date" class="form-control shadow-none" name="start_date" placeholder="Start Date" value="{{filtered_data.start_date}}">
+
+            <label for="exampleFormControlInput1" class="form-label">End Date:</label>
+            <input type="date" class="form-control shadow-none" name="end_date" placeholder="End Date" value="{{filtered_data.end_date}}">
+
+            {% else %}
+
+
+            <label for="exampleFormControlInput1" class="form-label">Start Date:</label>
+            <input type="date" class="form-control shadow-none" name="start_date" placeholder="Start Date">
+
+            <label for="exampleFormControlInput1" class="form-label">End Date:</label>
+            <input type="date" class="form-control shadow-none" name="end_date" placeholder="End Date">
+
+            {% endif %}
+
+
+            <button type="submit" class="btn btn-info text-center shadow-none mt-2"> Search</button>
+            <!-- <button type="reset" class="btn btn-info text-center shadow-none mt-2"> Reset</button> -->
+        </div>
+    </div>
+</form>
+{% endif %}
+<h1>{{ my_variable }}</h1>
+  <div class="row">
+    <div class="col-xl-6 offset-xl-3">
+      <div class="text-primary" role="status" >
+
+         
+        
+      
+          </div>
+
+<!-- Modal -->
+<div  class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div> -->
+      <div class="modal-body">
+        <div id="loader">
+        
+          <div class="sr-only text-center card text-primary" style="font-size: 30px;">Once the data has been filtered, you will be automatically redirected to the filtered ionograms page...
+            <div><span class="spinner-border text-primary" role="status"></div></span>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+        
+      </div>
     </div>
   </div>
   <div class="table-format">
@@ -32,13 +151,29 @@
         </tr>
       </thead>
       <tbody>
+
+        {% if flag %}
+        {% for i in users %}
+        <tr class="text-center">
+          <td>{{i.date}}</td>
+          <td><a href="{% url 'view_ionograms_by_tx_code' tx_code %}" >View Ionograms</a></td>
+        </tr>
+        {% endfor %}
+        {% else %}
+
         {% for i in users %}
         <tr class="text-center">
           
+          
           <td>{{i.folder_name}}</td>
-          <td><a href="{% url 'ionograms_filter' i.folder_name id %}" >View Ionograms</a></td>
+          <td>
+            <a href="{% url 'ionograms_filter' i.folder_name id %}" >View Ionograms</a>
+            <button class="btin btn-info" onclick="displayMessage( '{{i.folder_name}}' )">View Ionograms</button>
+          
+          </td>
         </tr>
         {% endfor %}
+        {% endif %}
         
 
       </tbody>
@@ -78,6 +213,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
+    <!-- Button trigger modal -->
+
+
+
+
+
 </body>
 
 </html>

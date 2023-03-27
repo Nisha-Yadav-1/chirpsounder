@@ -9,7 +9,7 @@ import psycopg2
 import glob
 from datetime import datetime, timedelta, timezone
 from .plot_ionograms import create_plot_ionograms
-from .update_tx_code import create_db_connection,get_virginia_lfm_ionograms, get_unfiltered_ionograms, get_search_data
+from .update_tx_code import create_db_connection,get_virginia_lfm_ionograms, get_unfiltered_ionograms, get_search_data, get_folder_date
 
 # Create your views here.
 
@@ -73,11 +73,52 @@ def timestamp_to_datetime(timestamp):
     return dt
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import json
+import time
+
+@api_view(['GET'])
+def filter_ionograms_api(request, folder_name, id):
+    if request.method == 'GET':
+        time.sleep(5)
+
+        # folder_name = '2021-01-04'
+        # id = 3
+
+        conn = create_db_connection()
+        data = Chripsounder.objects.filter(id=int(id)).values()[0]
+        files = list(get_virginia_lfm_ionograms(conn, folder_name))
+   
+    
+        print("files:-", len(files))
+        if len(files) > 0:
+            files = files
+        else:
+            filter_ionogram.creating_data_file(data, folder_name)
+        files = list(get_virginia_lfm_ionograms(conn, folder_name))
+        json_data = {"data": files, "name": data, "date": folder_name, "id": id, "status": 200}
+        if len(json_data):
+            return Response(json_data)
+        else:
+            return Response({"status": 500})
+
+def event_stream():
+    for i in range(5):
+        time.sleep(3)
+        yield 'data: The server time is: %s\n\n' % datetime.datetime.now()
+    
+
 def filter_ionograms(request, folder_name, id):
     conn = create_db_connection()
     data = Chripsounder.objects.filter(id=int(id)).values()[0]
     files = list(get_virginia_lfm_ionograms(conn, folder_name))
-   
+
+    
+
+
+    # stream =  StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+    
     
     print("files:-", len(files))
     if len(files) > 0:
@@ -85,7 +126,9 @@ def filter_ionograms(request, folder_name, id):
     else:
         filter_ionogram.creating_data_file(data, folder_name)
     files = list(get_virginia_lfm_ionograms(conn, folder_name))
-    return render(request, 'filter_ionogram.html', {"data": files, "name": data, "date": folder_name})
+    return render(request, 'filter_ionogram.html', {"data": files, "name": data, "date": folder_name, "id": id,})
+
+    
 
 def edit_transmitter(request, id):
     data = Chripsounder.objects.filter(id = id)
@@ -179,8 +222,46 @@ def unfiltered_ionograms(request):
     except EmptyPage:
         users = paginator.page(paginator.num_pages)
 
-    print(users)
+    # print(users)
     return render(request, 'all-ionograms.html', {"users": users})
+
+
+
+
+def filter_ionograms_by_tx_code(request, tx_code):
+    base_url = "/home/nishayadav/Myprojects/lfm_va"
+
+    conn = create_db_connection()
+
+
+    folder = get_folder_date(conn, tx_code)
+    print("folder:- ", folder)
+
+
+    flag = 'only_for_tx_code'
+
+    return render(request, 'view-filtered_ionogram.html', {"users": folder, "base_url": base_url, 'flag': flag, "tx_code": tx_code})
+
+
+
+
+def view_ionograms_by_tx_code(request, tx_code):
+    base_url = "/home/nishayadav/Myprojects/lfm_va"
+    print(tx_code)
+
+    conn = create_db_connection()
+    data = get_search_data(conn, tx_code, start_date=None, end_date=None)
+
+    filter_data = {}
+    if tx_code != 'Choose TX Code':
+        filter_data.update(
+            {
+            "tx_code": tx_code
+
+            }
+        )
+    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, "filtered_data": filter_data})
+
 
 def view_filtered_ionograms(request, id):
     lst = glob.glob(rootdir)
@@ -327,5 +408,9 @@ def search_by_codes(request):
     # url = f'view_unfiltered_ionograms/{folder_name}'
     # return redirect(url, data=data, base_url=base_url, selected_date=folder_name)
         
+
+import datetime
+import time
+from django.http import StreamingHttpResponse
 
 

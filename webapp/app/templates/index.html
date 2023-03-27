@@ -1,53 +1,55 @@
 <!doctype html>
 <html lang="en">
-  {% load bootstrap_icons %}
-  {% load static %}
-  
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-    <script src="{% static 'js/index.js' %}"></script>   
- 
-  </head>
-  <body>
-    {% include 'menu.html' %}
-    
-      <div class="container">
-        <div class="row mt-5">
-          <div class="col-xl-3">
-            <a href="{% url 'unfiltered_ionograms' %}" class="btn custom-button">View Unfiltered</a>
-          </div>
-    
-          <div class="col-xl-9">
-            <h3 class="text-center Ionosonde-list">Ionosonde Locations</h3>
-            
-          </div>
-        </div>
-        </div>
-        
-      
+{% load bootstrap_icons %}
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+  <script src="{% static 'js/index.js' %}"></script>
+
+</head>
+
+<body>
+  {% include 'menu.html' %}
+
+  <div class="container">
+    <div class="row mt-5">
+      <div class="col-xl-3">
+        <a href="{% url 'unfiltered_ionograms' %}" class="btn custom-button">View Unfiltered</a>
+      </div>
+
+      <div class="col-xl-9">
+        <h3 class="text-center Ionosonde-list">Ionosonde Locations</h3>
+
+      </div>
     </div>
-    <div class="table-format">
-      <table width="100%" class="table m-4">
-        <thead class="table-light table-bordered">
-          <tr class="text-center">
-            <th scope="col">ID</th>
-            <th scope="col">TX Code</th>
-            <th scope="col">Transmitter Name</th>
-            <th scope="col">Latitude</th>
-            <th scope="col">Longitude</th>
-            <th scope="col">Ground Range [km]</th>
-            <th scope="col">Chrip Rate [kHz/s]</th>
-            <th scope="col">View Details</th>
-            
-          </tr>
-        </thead>
-        <tbody>
-         {% for d in data %}
-         <tr class="text-center">
+  </div>
+
+
+  </div>
+  <div class="table-format">
+    <table width="100%" class="table m-4">
+      <thead class="table-light table-bordered">
+        <tr class="text-center">
+          <th scope="col">ID</th>
+          <th scope="col">TX Code</th>
+          <th scope="col">Transmitter Name</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Ground Range [km]</th>
+          <th scope="col">Chrip Rate [kHz/s]</th>
+          <th scope="col">View Details</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in data %}
+        <tr class="text-center">
           <td>{{d.id}}</td>
           <td>{{d.tx_code}}</td>
           <td>{{d.name_of_transmitter}}</td>
@@ -56,26 +58,31 @@
           <td>{{d.range_zero}}</td>
           <td>{{d.chriprate}}</td>
           <td><a href="{% url 'edit-transmitter' d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil' %} </a>
-          <!-- <span class="btn btn-sm custom-button">
+            <!-- <span class="btn btn-sm custom-button">
           <form method='POST' action="/filter-ionograms/{{d.id}}">
             {% csrf_token %}
             <input type="date" name="selected_date" id="" required>
             <button type="submit" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</button>
           </form></span> -->
-          <a href="unfilter_ionograms" class="btn custom-button">View ionograms</a>
-          <a href="{% url 'view_filtered_ionograms' d.id %}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
+            <a href="unfilter_ionograms/{{d.tx_code}}" class="btn custom-button">View ionograms</a>
+            <a href="{% url 'view_filtered_ionograms' d.id %}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
+
           
-          
-          <a href="#" class="btn custom-button">Create keogram</a>
-          <a href="#" class="btn custom-button">View Keogram</a>
-        </td>
+
+
+            <a href="#" class="btn custom-button">Create keogram</a>
+            <a href="#" class="btn custom-button">View Keogram</a>
+          </td>
         </tr>
         {% endfor %}
-          
-        </tbody>
-      </table>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  </body>
+
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
