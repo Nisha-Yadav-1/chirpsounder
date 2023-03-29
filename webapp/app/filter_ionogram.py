@@ -71,7 +71,6 @@ def filter_ionograms(dirs1, data, f, DataDict, normalize_by_frequency=True):
     ho = None
     # filter_data = []
 
-    print(data)
 
     if file_name.startswith("lfm"):
         if not file_name.endswith(".done"):
@@ -268,7 +267,7 @@ def filter_ionograms(dirs1, data, f, DataDict, normalize_by_frequency=True):
 
 def save_var(dirs1, DataDict):
     path1 = output_dir1 + '/' + dirs1 + '/' + dirs1[5:10] + 'k.data'
-    print(path1)
+    # print(path1)
     # ipdb.set_trace()ta
     with open(path1, 'wb') as f:
         pickle.dump(DataDict, f)
@@ -288,7 +287,7 @@ def creating_data_file(data, folder_name):
     # filter ionograms for range of entered dates
     # date format "yyyy-mm-dd"
     # 2023-01-27
-    print("Date:- ", folder_name)
+    # print("Date:- ", folder_name)
     folder_name = folder_name.split("-")
     year = int(folder_name[0])
     month = int(folder_name[1])
@@ -317,7 +316,7 @@ def creating_data_file(data, folder_name):
 
                 # path goes into each-day-folder within the rootdir
                 path = os.path.join(rootdir, dirs1)
-                print(dirs1)
+                # print(dirs1)
                 os.chdir(path)
                 fl = glob.glob("%s/*" % (path))
                 fl.sort()

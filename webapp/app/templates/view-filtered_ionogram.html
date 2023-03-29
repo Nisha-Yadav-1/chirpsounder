@@ -11,7 +11,7 @@
     integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'css/home.css' %}">
   <script src="{% static 'js/index.js' %}"></script>
-
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 
 <body>
@@ -114,7 +114,12 @@
           </div>
 
 <!-- Modal -->
-<div  class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+<div id="loader">
+  
+</div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <!-- <div class="modal-header">
@@ -122,22 +127,11 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div> -->
       <div class="modal-body">
-        <div id="loader">
         
-          <div class="sr-only text-center card text-primary" style="font-size: 30px;">Once the data has been filtered, you will be automatically redirected to the filtered ionograms page...
-            <div><span class="spinner-border text-primary" role="status"></div></span>
-          </div>
-      </div>
     </div>
   </div>
 </div>
-
-
-
-
-
-        
-      </div>
+</div>
     </div>
   </div>
   <div class="table-format">
@@ -167,7 +161,7 @@
           
           <td>{{i.folder_name}}</td>
           <td>
-            <a href="{% url 'ionograms_filter' i.folder_name id %}" >View Ionograms</a>
+            <!-- <a href="{% url 'ionograms_filter' i.folder_name id %}" >View Ionograms</a> -->
             <button class="btin btn-info" onclick="displayMessage( '{{i.folder_name}}' )">View Ionograms</button>
           
           </td>

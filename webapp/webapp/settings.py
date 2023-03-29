@@ -39,8 +39,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_bootstrap_icons",
     "app",
-    "rest_framework"
+    "rest_framework",
+    # "django_logtail",
+
 ]
+
+
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

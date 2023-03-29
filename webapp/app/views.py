@@ -91,7 +91,7 @@ def filter_ionograms_api(request, folder_name, id):
         files = list(get_virginia_lfm_ionograms(conn, folder_name))
    
     
-        print("files:-", len(files))
+        # print("files:-", len(files))
         if len(files) > 0:
             files = files
         else:
@@ -120,7 +120,7 @@ def filter_ionograms(request, folder_name, id):
     # stream =  StreamingHttpResponse(event_stream(), content_type='text/event-stream')
     
     
-    print("files:-", len(files))
+    # print("files:-", len(files))
     if len(files) > 0:
         files = files
     else:
@@ -197,7 +197,7 @@ def edit_receiver(request, id):
     
 
 def create_ionograms(request, filename):
-    print(filename)
+    # print(filename)
     create_plot_ionograms(filename)
     return redirect('/filter-ionograms/3')
 
@@ -208,7 +208,7 @@ rootdir = '/media/nishayadav/Seagate Backup Plus Drive/chirp/*'
 def unfiltered_ionograms(request):
     lst = glob.glob(rootdir)
     lst = list(map(get_folder_name, lst))
-    print(lst)
+    # print(lst)
 
 
     # user_list = User.objects.all()

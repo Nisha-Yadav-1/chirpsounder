@@ -49,7 +49,7 @@ class chirp_config:
 
         if fname != None:
             if os.path.exists(fname):
-                print("reading %s"%(fname))
+                # print("reading %s"%(fname))
                 c.read(fname)
             else:
                 print("configuration file %s doesn't exist. using default values"%(fname))
@@ -73,7 +73,7 @@ class chirp_config:
         try:
             self.copy_destination=json.loads(c["config"]["copy_destination"])
         except:
-            print("couldn't read copy destination")
+            # print("couldn't read copy destination")
             pass
         self.station_name=c["config"]["station_name"]
         
