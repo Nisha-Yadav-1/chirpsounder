@@ -4,6 +4,12 @@
   color: white !important;
   border-radius: 11px 15px 0px 0px;
 }
+
+.subheading {
+  background-color: #c21b1b !important;
+  color: white !important;
+  border-radius: 11px 15px 0px 0px;
+}
 .transmitter-edit {
   background-color: #f5ecfb !important;
   margin-left: -11px !important;
@@ -32,6 +38,12 @@
 
 .custom-button {
   background-color: #753f97;
+  color: white;
+  border: #753f97 !important;
+}
+
+.custom-delete-button {
+  background-color: #d92317 !important;
   color: white;
   border: #753f97 !important;
 }

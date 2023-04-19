@@ -20,25 +20,16 @@ def create_db_connection():
 #Function Name      :               update_virginia_tx_code
 #Functionality      :               Updating TX_CODE_VA field in DB
 
-def update_tx_code(conn, file, data):
-        # for i in glob.glob('/home/nishayadav/Myprojects/lfm_va/*'):
+def update_tx_code(conn, file, data, flag):
         print(data)
         table_name = None
         cursor = conn.cursor()
         i = file.split("/")[-1]
         print("File under tax code functions:-", file)
-        if i.startswith("par"):
-            table_name = 'table_par_file'
-            cursor.execute(
-            f"update {table_name} set tx_cva_rx_w2naf = true where split_part(par_filename, '/', 2) = '{i}'",
-
-        )
-            
-        
-        elif i.startswith("lfm"):
+        if flag:
             table_name = 'table_lfm_file'
             cursor.execute(
-            f"update {table_name} set tx_cva_rx_w2naf = true where split_part(lfm_file_path, '/', 2) = '{i}'",
+            f"update {table_name} set classification_flag = {flag} where split_part(lfm_file_path, '/', 2) = '{i}'",
 
         )
             q = f"update table_lfm_file set tx_code_w2naf = array_append(tx_code_w2naf, '{data['tx_code']}') where split_part(lfm_file_path, '/', 2) = '{i}'" 
@@ -46,15 +37,28 @@ def update_tx_code(conn, file, data):
             cursor.execute(q)
         
             print("file is:- ", file)
-        
+
+        else:
+            f"update {table_name} set classification_flag = {flag} where split_part(lfm_file_path, '/', 2) = '{i}'",
+
 
         conn.commit()
         print("Done...")
 
+def get_virginia_lfm_ionograms_api(conn, folder_name):
+    print("Folder name", folder_name)
+    query = f"select lfm_filename from table_lfm_file tlf where tlf.classification_flag is true and lfm_file_path like '%{folder_name}%'"
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    data = [i[0] for i in data]
+    return data
+
 #getting the folder name
 def get_virginia_lfm_ionograms(conn, folder_name):
     print("Folder name", folder_name)
-    query = f"select lfm_filename from table_lfm_file tlf where tlf.tx_cva_rx_w2naf is true and lfm_file_path like '%{folder_name}%'"
+    query = f"select lfm_filename from table_lfm_file tlf where tlf.classification_flag is true and lfm_file_path like '%{folder_name}%'"
 
     cursor = conn.cursor()
     cursor.execute(query)
@@ -82,7 +86,7 @@ def get_unfiltered_ionograms(conn, folder_name):
              }
              )
         counter = counter + 1
-    # print(unfiltered_data)
+
     return unfiltered_data
 
 #By using this function searching functionality is working. User would be able to choose TX-Code , RX-code and data-range to search data related to them. User can user individually these parameters and combination as well.
@@ -135,4 +139,61 @@ def get_folder_date(conn, tx_code):
              )
     print(folder)
     return folder
+
+
+def total_no_ionograms(txcode, conn):
+
+    folder = {}
+    cursor = conn.cursor()
+    cursor.execute("select count(*) from table_lfm_file tlf;")
+
+    cursor1 = conn.cursor()
+    cursor1.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' != any(tx_code_w2naf)")
+
+    cursor2 = conn.cursor()
+    cursor2.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' = any(tx_code_w2naf)")
+
+
+    start_date = conn.cursor()
+    start_date.execute("select date as start_date from table_lfm_file tlf order by date asc limit 1;")
+
+    end_date = conn.cursor()
+    end_date.execute(f"select date as last_date from table_lfm_file tlf2 order by date desc  limit 1;")
+    total_filtered_ionograms = cursor2.fetchall()[0][0]
+    x = cursor.fetchall()[0][0]
+    y = cursor1.fetchall()[0][0]
+
+    st_date = start_date.fetchall()[0][0]
+    ed_date = end_date.fetchall()[0][0]
+    folder.update(
+    {
+    "total_ionograns": x,
+    "total_unclassified": x - total_filtered_ionograms - y,
+    "total_filtered":total_filtered_ionograms,
+    "unfiltered": y,
+    "start_date":str(st_date),
+    "end_date":str(ed_date)
+    }
+    )
+    return folder
     
+
+
+
+
+
+def get_ionograms_after_summary(conn, flag, tx_code=None):
+    if flag == 'total':
+        query = f"select lfm_filename from table_lfm_file"
+    elif flag == 'unfiltered':
+        print('inside')
+        query = f"select split_part(lfm_file_path, '/', 1), lfm_filename, tx_code_w2naf, station_name from table_lfm_file tlf where not '{tx_code}' = any(tx_code_w2naf)"
+    else:
+        query = f"select split_part(lfm_file_path, '/', 1),lfm_filename from table_lfm_file tlf where '{flag}' = any(tx_code_w2naf)"
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+    data = cursor.fetchall()
+    data = [{'filename': i[1], 'date': i[0], 'tx_code': i[2], 'station_name': i[3]} for i in data]
+    data = enumerate(data)
+    return data

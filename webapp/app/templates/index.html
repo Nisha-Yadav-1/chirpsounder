@@ -33,6 +33,7 @@
 
   </div>
   <div class="table-format">
+    {% if data %}
     <table width="100%" class="table m-4">
       <thead class="table-light table-bordered">
         <tr class="text-center">
@@ -47,6 +48,8 @@
 
         </tr>
       </thead>
+      
+        
       <tbody>
         {% for d in data %}
         <tr class="text-center">
@@ -57,32 +60,30 @@
           <td>{{d.longitude}}</td>
           <td>{{d.range_zero}}</td>
           <td>{{d.chriprate}}</td>
-          <td><a href="{% url 'edit-transmitter' d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil' %} </a>
-            <!-- <span class="btn btn-sm custom-button">
-          <form method='POST' action="/filter-ionograms/{{d.id}}">
-            {% csrf_token %}
-            <input type="date" name="selected_date" id="" required>
-            <button type="submit" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</button>
-          </form></span> -->
+          <td><a href="{% url 'edit-transmitter' d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil-fill' %} </a>
             <a href="unfilter_ionograms/{{d.tx_code}}" class="btn custom-button">View ionograms</a>
-            <a href="{% url 'view_filtered_ionograms' d.id %}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
-
-          
-
-
+            <a href="ionograms-summary/{{d.tx_code}}/{{d.id}}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
             <a href="#" class="btn custom-button">Create keogram</a>
             <a href="#" class="btn custom-button">View Keogram</a>
+            <a href="{% url 'delete_sounder' d.id %}" class="btn custom-button" style="background-color: red !important;">Delete {% bs_icon 'trash-fill' %}</a>
+          
           </td>
         </tr>
         {% endfor %}
-
       </tbody>
+      
     </table>
+
+    {% else %}
+
+    <h2 class="text-center mt-5">Add Transmitter</h2>
+        {% endif %}
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
+    
 </body>
 
 </html>
