@@ -9,6 +9,7 @@
 # lock or other technical issues, (ii) imperfect algorithm which we have now !
 
 ##
+from django.conf import settings
 import logging
 import pickle
 from numpy import unravel_index
@@ -255,6 +256,7 @@ def save_var(dirs1, DataDict):
 def creating_data_file(data, folder_name):
 
     # filter_data = []
+    os.remove(os.path.join(settings.BASE_DIR, 'info.log'))
 
     # filter ionograms for range of entered dates
     # date format "yyyy-mm-dd"

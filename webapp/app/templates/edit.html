@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Transmitter</title>
+    <input type="hidden" name="flag" value="transmitter">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
      <link rel="stylesheet" href="{% static 'css/home.css' %}">
@@ -17,7 +18,13 @@
             <div class="col-md-2"></div>
             <div class="col-md-8 transmitter-edit">
                 <h3 class="Ionosonde-list text-center mb-5">Update Transmitter</h3>
-        <form method="POST" action="{% url 'edit-transmitter' data.id %}">
+
+                {% if flag == 'edit_transmitter' %}
+        <form method="POST" action="{% url 'edit-transmitter' tx_code data.id  %}">
+
+            {% else %}
+            <form method="POST" action="{% url 'edit_filter_transmitter' tx_code data.id  %}">
+            {% endif %}
             {% csrf_token %}
             <div class="form-group">
                 <label for="exampleInputEmail1">TX Code</label>

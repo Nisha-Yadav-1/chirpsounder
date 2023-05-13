@@ -111,21 +111,28 @@
 
                     {% if selected_date %}
                     <td>
-                        <a href="/static/{{selected_date}}/{{i.png_filename}}">
+                        <a href="/view-ionograms/{{i.filename|slice:':-2'|add:'png'}}/{{selected_date}}/{{id}}">
 
                             <img src="/static/images/thumbnail.png" alt="" width="50" height="50">
-
+                            
                         </a>
                     </td>
 
 
                     {% else %}
                     <td>
-                        <a href="/static/{{i.selected_date}}/{{i.png_filename}}">
+                        <!-- <a href="/static/{{i.selected_date}}/{{i.png_filename}}">
+
+                            <img src="/static/images/thumbnail.png" alt="" width="50" height="50">
+
+                        </a> -->
+                        <a href="/view-ionograms/{{i.png_filename}}/{{i.selected_date}}/{{id}}">
 
                             <img src="/static/images/thumbnail.png" alt="" width="50" height="50">
 
                         </a>
+
+                        
                     </td>
                     {% endif %}
                 </tr>

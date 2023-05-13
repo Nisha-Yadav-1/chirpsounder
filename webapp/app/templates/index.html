@@ -21,11 +21,11 @@
     <div class="row mt-5">
       <div class="col-xl-3">
         <a href="{% url 'unfiltered_ionograms' %}" class="btn custom-button">View Unfiltered</a>
+        <a href="add-transmitter" class="btn btn-success">Add Transmitter</a>
       </div>
 
       <div class="col-xl-9">
         <h3 class="text-center Ionosonde-list">Ionosonde Locations</h3>
-
       </div>
     </div>
   </div>
@@ -60,11 +60,11 @@
           <td>{{d.longitude}}</td>
           <td>{{d.range_zero}}</td>
           <td>{{d.chriprate}}</td>
-          <td><a href="{% url 'edit-transmitter' d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil-fill' %} </a>
-            <a href="unfilter_ionograms/{{d.tx_code}}" class="btn custom-button">View ionograms</a>
+          <td><a href="{% url 'edit-transmitter' d.tx_code d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil-fill' %} </a>
+            <a href="unfilter_ionograms/{{d.tx_code}}/{{d.id}}" class="btn custom-button">View ionograms</a>
             <a href="ionograms-summary/{{d.tx_code}}/{{d.id}}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
-            <a href="#" class="btn custom-button">Create keogram</a>
-            <a href="#" class="btn custom-button">View Keogram</a>
+            <!-- <a href="#" class="btn custom-button">Create keogram</a>
+            <a href="#" class="btn custom-button">View Keogram</a> -->
             <a href="{% url 'delete_sounder' d.id %}" class="btn custom-button" style="background-color: red !important;">Delete {% bs_icon 'trash-fill' %}</a>
           
           </td>
@@ -77,6 +77,7 @@
     {% else %}
 
     <h2 class="text-center mt-5">Add Transmitter</h2>
+    
         {% endif %}
   </div>
 

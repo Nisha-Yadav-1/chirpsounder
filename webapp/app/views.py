@@ -17,6 +17,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,35 +36,42 @@ def delete_sounder(request, id):
     return redirect('/')
 
 
-def view_ionograms(request, filename):
+def view_ionograms(request, filename, folder_name, id=None):
     """
     Functions to view filtered ionograms
 
     """
-
-    lfm_vir = "/home/nishayadav/chirpsounder2_django/chirpsounder/webapp/app/static/lfm_va/*"
-    files = glob.glob(lfm_vir)
+    conn = create_db_connection()
+    data = Chripsounder.objects.get(id=id)
+    files =  get_files_for_previous_next(conn, folder_name, data.tx_code)   
+    files = [i[0] for i in files]
+    # lfm_vir = "/home/nishayadav/chirpsounder2_django/chirpsounder/webapp/app/static/lfm_va/*"
+    # files = glob.glob(lfm_vir)
     h5_files = []
     png_files = []
     for file_name in files:
         if file_name.endswith("h5"):
             h5_files.append(file_name)
-        else:
-            png_files.append(file_name.split("/")[-1])
+            png_files.append(f"{'.'.join(file_name.split('.')[0:2])}.png")
+        # else:
+        #     png_files.append(file_name.split("/")[-1])
+            
 
     filter_data = []
     for i in h5_files:
-        png_file = i.split("/")[-1]
-
-        if f'{png_file[0: -2]}png' in png_files:
-            filter_data.append(f'{png_file[0: -2]}png')
+        
+        png_file = i.split(".")[0: 2]
+        # print(f"{'.'.join(png_file[0: 2])}.png")
+        if f"{'.'.join(png_file[0: 2])}.png" in png_files:
+            filter_data.append(f"{'.'.join(png_file[0: 2])}.png")
     for_previous = []
     for_next = []
 
-    index = filter_data.index(filename)
+
+    index = filter_data.index(f"{'.'.join(filename.split('.')[0: 2])}.png")
     for_previous = filter_data[0: index]
     for_next = filter_data[index+1:]
-    return render(request, 'view-ionograms.html', {"filename": filename, "for_previous": for_previous, "for_next": for_next})
+    return render(request, 'view-ionograms.html', {"filename": filename, "for_previous": for_previous, "for_next": for_next, 'folder_name': folder_name})
 
 
 def timestamp_to_datetime(timestamp):
@@ -112,10 +120,11 @@ def filter_ionograms(request, folder_name, id):
     else:
         filter_ionogram.creating_data_file(data, folder_name)
     files = list(get_virginia_lfm_ionograms(conn, folder_name))
-    return render(request, 'filter_ionogram.html', {"data": files, "name": data, "date": folder_name, "id": id, })
+    return render(request, 'filter_ionogram.html', {"data": files, "name": data, "date": folder_name, "id": id})
 
 
-def edit_transmitter(request, id):
+def edit_transmitter(request, tx_code, id):
+    flag = 'edit_transmitter'
     data = Chripsounder.objects.filter(id=id)
     context = {}
     if request.method == 'POST':
@@ -144,8 +153,42 @@ def edit_transmitter(request, id):
             }
         )
         data.update(**context)
-        return redirect('homepage')
-    return render(request, 'edit.html', {"data": data[0]})
+        # if flag == 'transmitter':
+        return redirect(f'/')
+    return render(request, 'edit.html', {"data": data[0], 'tx_code': tx_code, 'flag': flag})
+
+def edit_filter_transmitter(request, tx_code, id):
+    data = Chripsounder.objects.filter(id=id)
+    context = {}
+    flag = 'edit_filter_transmitter'
+    if request.method == 'POST':
+        name_of_transmitter = request.POST['transmitter_name']
+        tx_code = request.POST['tx_code']
+        lat = request.POST['lat']
+        long = request.POST['long']
+        ground_range = request.POST['ground_range']
+        first_hop_range_one = request.POST['first_hop_range_one']
+        first_hop_range_two = request.POST['first_hop_range_two']
+        chriprate = request.POST['chrip_rate']
+        second_hop_range_one = request.POST['second_hop_range_one']
+        second_hop_range_two = request.POST['second_hop_range_two']
+        context.update(
+            {
+                "name_of_transmitter": name_of_transmitter,
+                "tx_code": tx_code,
+                "lat": lat,
+                "longitude": long,
+                "range_zero": ground_range,
+                "chriprate": chriprate,
+                "first_hop_range_one": first_hop_range_one,
+                "first_hop_range_two": first_hop_range_two,
+                "second_hop_range_one": second_hop_range_one,
+                "second_hop_range_two": second_hop_range_two,
+            }
+        )
+        data.update(**context)
+        return redirect(f'/ionograms-summary/{tx_code}/{id}')
+    return render(request, 'edit.html', {"data": data[0], 'tx_code': tx_code, })
 
 
 def receiver_info(request):
@@ -215,7 +258,7 @@ def unfiltered_ionograms(request):
 
 
 
-def filter_ionograms_by_tx_code(request, tx_code):
+def filter_ionograms_by_tx_code(request, tx_code, id):
     base_url = "/home/nishayadav/Myprojects/lfm_va"
 
     conn = create_db_connection()
@@ -226,12 +269,12 @@ def filter_ionograms_by_tx_code(request, tx_code):
 
     flag = 'only_for_tx_code'
     logger.info('Message to display on console and UI')
-    return render(request, 'view-filtered_ionogram.html', {"users": folder, "base_url": base_url, 'flag': flag, "tx_code": tx_code})
+    return render(request, 'view-filtered_ionogram.html', {"users": folder, "base_url": base_url, 'flag': flag, "tx_code": tx_code, "id": id})
 
 
 
 
-def view_ionograms_by_tx_code(request, tx_code):
+def view_ionograms_by_tx_code(request, tx_code, id):
     base_url = "/home/nishayadav/Myprojects/lfm_va"
     print(tx_code)
 
@@ -246,7 +289,7 @@ def view_ionograms_by_tx_code(request, tx_code):
 
             }
         )
-    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, "filtered_data": filter_data})
+    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, "filtered_data": filter_data, "id": id})
 
 
 def view_filtered_ionograms(request, id):
@@ -322,17 +365,19 @@ def loginfo(request):
     return render(request, 'log.html', {"log_data": f.read()})
 
 
-def total_no_ionogramss(request, tx_code, id):
+def total_number_ionograms(request, tx_code, id):
+    # Creating database connection
     conn = create_db_connection()
     data = total_no_ionograms(txcode=tx_code, conn=conn)
-    print(data)
     return render(request, 'summary_of_all_ionograms.html', {"data": data, "tx_code": tx_code, "id": id})
 
 
 def ionograms_details_from_summary(request, flag, id):
     conn = create_db_connection()
     data = Chripsounder.objects.filter(id=int(id)).values()[0]
+    print("data", data)
     files = list(get_ionograms_after_summary(conn, flag))
+    print("files", files)
     page = request.GET.get('page', 1)
 
     paginator = Paginator(files, 70)
@@ -362,3 +407,91 @@ def ionograms_details_from_summary_unfilltered(request, flag, id):
         files = paginator.page(paginator.num_pages)
 
     return render(request, 'ionograms_details_from_summary_unfilltered.html', {"data": files})
+
+
+
+@api_view(['GET'])
+def clear_classification(request):
+    try:
+        conn = create_db_connection()
+        clearClassification(conn)
+        return HttpResponse({"status": 200})
+    except Exception as e:
+        return HttpResponse({"status": 500})
+    
+
+
+def add_transmitter(request):
+    flag = 'transmitter'
+    transmitter = {}
+    if request.method == 'POST':
+        name_of_transmitter = request.POST['transmitter_name']
+        tx_code = request.POST['tx_code']
+        lat = request.POST['lat']
+        long = request.POST['long']
+        ground_range = request.POST['ground_range']
+        receiver_code = request.POST['receiver_code']
+        first_hop_range_one = request.POST['first_hop_range_one']
+        first_hop_range_two = request.POST['first_hop_range_two']
+        chriprate = request.POST['chrip_rate']
+        second_hop_range_one = request.POST['second_hop_range_one']
+        second_hop_range_two = request.POST['second_hop_range_two']
+
+        if Chripsounder.objects.filter(tx_code=tx_code, deleted=False).exists():
+            messages.error(request, "Transmitter already exist..")
+            return render(request, 'add_transmitter.html', {"flag": flag})
+
+        else:
+            transmitter.update(
+                {
+                    "name_of_transmitter": name_of_transmitter,
+                    "tx_code": tx_code,
+                    "receiver_code": receiver_code,
+                    "lat": lat,
+                    "longitude": long,
+                    "range_zero": ground_range,
+                    "chriprate": chriprate,
+                    "first_hop_range_one": first_hop_range_one,
+                    "first_hop_range_two": first_hop_range_two,
+                    "second_hop_range_one": second_hop_range_one,
+                    "second_hop_range_two": second_hop_range_two,
+                }
+            )
+
+            obj = Chripsounder(**transmitter)
+            obj.save()
+            return redirect('/')
+    return render(request, 'add_transmitter.html', {"flag": flag})
+
+
+def add_receiver(request):
+    flag = 'receiver'
+    receiver = {}
+    if request.method == 'POST':
+        receiver_name = request.POST['receiver_name']
+        receiver_code = request.POST['receiver_code']
+        receiver_location = request.POST['receiver_location']
+        receiver_lat = request.POST['receiver_lat']
+        receiver_long = request.POST['receiver_long']
+
+        if ReceiverInfos.objects.filter(receiver_code=receiver_code, deleted=False).exists():
+            messages.error(request, 'Receiver already exist...')
+            return render(request, 'add_transmitter.html', {"flag": flag})
+
+        else:
+            messages.success(request, 'Receiver has been created successfully..')
+            receiver.update(
+                {
+                    "receiver_name": receiver_name,
+                    "receiver_code": receiver_code,
+                    "receiver_location": receiver_location,
+                    "receiver_lat": receiver_lat,
+                    "receiver_long": receiver_long,
+                }
+            )
+            obj = ReceiverInfos(**receiver)
+            obj.save()
+            return redirect('/receiver-info')
+    return render(request, 'add_transmitter.html', {"flag": flag})
+
+

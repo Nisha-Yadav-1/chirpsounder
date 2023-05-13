@@ -42,10 +42,31 @@ function displayMessage(folder_name) {
 xhttp.open("GET", url, true);
 xhttp.send();
 
-document.getElementById("loader").innerHTML = `<div class="sr-only text-center card text-primary offset-md-4" style="font-size: 30px;">Processing files... <i></i><div></div>
+document.getElementById("loader").innerHTML = `<div class="sr-only text-center card text-primary" style="font-size: 30px;">Processing files... <i></i><div></div>
 <div></span>`; 
 }
 
+
+function clear_classification()
+{
+  var url = '/clear-classification';
+  const xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+      window.location.reload();
+    }
+  }
+
+xhttp.open("GET", url, true);
+xhttp.send();
+}
+
+
+function get_latest_log()
+{
+  alert('')
+  window.location.reload();
+}
 
 
 function displaymodel()
@@ -54,9 +75,9 @@ function displaymodel()
 }
 
 
-function clear_classification()
-{
-  document.getElementById('start_date').value = '';
-  document.getElementById('end_date').value = '';
-  document.getElementById('close').click();
-}
+// function clear_classification()
+// {
+//   document.getElementById('start_date').value = '';
+//   document.getElementById('end_date').value = '';
+//   document.getElementById('close').click();
+// }

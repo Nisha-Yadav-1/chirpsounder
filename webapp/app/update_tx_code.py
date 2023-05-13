@@ -69,8 +69,6 @@ def get_virginia_lfm_ionograms(conn, folder_name):
 #All the filtered ionograms
 def get_unfiltered_ionograms(conn, folder_name):
     query = f"select lfm_filename, tx_code_w2naf from table_lfm_file tlf where tlf. lfm_file_path like '%{folder_name}%'"
-
-
     unfiltered_data = []
     cursor = conn.cursor()
     cursor.execute(query)
@@ -143,20 +141,23 @@ def get_folder_date(conn, tx_code):
 
 def total_no_ionograms(txcode, conn):
 
-    folder = {}
+    folder = {} 
+    # Creating cursor object
     cursor = conn.cursor()
+    #  Total no. of ionograms
     cursor.execute("select count(*) from table_lfm_file tlf;")
 
     cursor1 = conn.cursor()
+    # Total filtered ionograms
     cursor1.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' != any(tx_code_w2naf)")
 
     cursor2 = conn.cursor()
+    #  Total unfiltered ionograms
     cursor2.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' = any(tx_code_w2naf)")
 
 
     start_date = conn.cursor()
     start_date.execute("select date as start_date from table_lfm_file tlf order by date asc limit 1;")
-
     end_date = conn.cursor()
     end_date.execute(f"select date as last_date from table_lfm_file tlf2 order by date desc  limit 1;")
     total_filtered_ionograms = cursor2.fetchall()[0][0]
@@ -183,17 +184,42 @@ def total_no_ionograms(txcode, conn):
 
 
 def get_ionograms_after_summary(conn, flag, tx_code=None):
+    print(flag, tx_code)
     if flag == 'total':
         query = f"select lfm_filename from table_lfm_file"
     elif flag == 'unfiltered':
         print('inside')
         query = f"select split_part(lfm_file_path, '/', 1), lfm_filename, tx_code_w2naf, station_name from table_lfm_file tlf where not '{tx_code}' = any(tx_code_w2naf)"
     else:
-        query = f"select split_part(lfm_file_path, '/', 1),lfm_filename from table_lfm_file tlf where '{flag}' = any(tx_code_w2naf)"
+        query = f"select split_part(lfm_file_path, '/', 1),lfm_filename, tx_code_w2naf, station_name from table_lfm_file tlf where '{flag}' = any(tx_code_w2naf)"
 
     cursor = conn.cursor()
     cursor.execute(query)
     data = cursor.fetchall()
+    print("Data", data)
     data = [{'filename': i[1], 'date': i[0], 'tx_code': i[2], 'station_name': i[3]} for i in data]
     data = enumerate(data)
     return data
+
+
+
+
+def get_files_for_previous_next(conn, folder_name, tx_code):
+    query = f"select lfm_filename from table_lfm_file tlf where '{tx_code}' = any(tx_code_w2naf) and date = '{folder_name}'"
+    cursor = conn.cursor()
+    cursor.execute(query)
+    files = cursor.fetchall()
+
+    return files
+
+
+def clearClassification(conn):
+#     update table_lfm_file set tx_code_w2naf = Null  where lfm_file_path = '2022-05-24/lfm_ionogram-000-1653357033.01.h5' 
+#  select * from table_lfm_file tlf where  lfm_file_path = '2022-05-24/lfm_ionogram-000-1653357033.01.h5' 
+
+    query = f"update table_lfm_file set tx_code_w2naf = Null"
+
+    cursor = conn.cursor()
+    cursor.execute(query)
+    conn.commit()
+    

@@ -45,15 +45,9 @@
                     <td>{{name.receiver_code}}</td>
                     <td>{{date}}</td>
                     <td><a href="/static/{{i}}" class="">{{i}}</a></td>
-                    <td><a href="/static/{{date}}/{{i|slice:':-2'|add:'png'}}">
-
+                    <td><a href="/view-ionograms/{{i|slice:':-2'|add:'png'}}/{{date}}/{{id}}">
                         <img src="/static/images/thumbnail.png" alt="ionogram" width="50" height="50">
-
-                    </a></td>
-
-                    
-                    
-                    
+                    </a></td>   
                 </tr> 
                 {% endfor %}
 

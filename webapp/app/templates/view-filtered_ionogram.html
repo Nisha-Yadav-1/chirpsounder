@@ -151,7 +151,7 @@
         {% for i in users %}
         <tr class="text-center">
           <td>{{i.date}}</td>
-          <td><a href="{% url 'view_ionograms_by_tx_code' tx_code %}">View Ionograms</a></td>
+          <td><a href="{% url 'view_ionograms_by_tx_code' tx_code id %}">View Ionograms</a></td>
         </tr>
         {% endfor %}
         {% else %}
