@@ -221,6 +221,7 @@ def filter_ionograms(dirs1, data, f, DataDict, normalize_by_frequency=True):
                     logger.info(file_names)
                     update_tx_code(connection, f, data, True)
                 else:
+                    connection = create_db_connection()
                     update_tx_code(connection, f, data, False)
     return DataDict
 

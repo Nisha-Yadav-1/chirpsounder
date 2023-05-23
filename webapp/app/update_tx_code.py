@@ -217,7 +217,7 @@ def clearClassification(conn):
 #     update table_lfm_file set tx_code_w2naf = Null  where lfm_file_path = '2022-05-24/lfm_ionogram-000-1653357033.01.h5' 
 #  select * from table_lfm_file tlf where  lfm_file_path = '2022-05-24/lfm_ionogram-000-1653357033.01.h5' 
 
-    query = f"update table_lfm_file set tx_code_w2naf = Null"
+    query = f"update table_lfm_file set tx_code_w2naf = Null, classification_flag = false"
 
     cursor = conn.cursor()
     cursor.execute(query)
