@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import glob
 import h5py
 import scipy.constants as c
-from .chirp_config import *
 from .chirp_det import *
 import sys
 import os
@@ -98,7 +97,6 @@ def plot_ionogram(output_dir,max_range_extent ,min_range,max_range,manual_range_
 
 
 def create_plot_ionograms(filename):
-    # conf=chirp_config()
     station_name="station_name"
     max_range_extent=2000000.0
     min_range=200000.0

@@ -16,6 +16,8 @@ import os
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 import logging
+from .db import create_db_connection
+    
 
 
 logger = logging.getLogger(__name__)
@@ -259,7 +261,6 @@ def unfiltered_ionograms(request):
 
 
 def filter_ionograms_by_tx_code(request, tx_code, id):
-    base_url = "/home/nishayadav/Myprojects/lfm_va"
 
     conn = create_db_connection()
 
@@ -269,13 +270,12 @@ def filter_ionograms_by_tx_code(request, tx_code, id):
 
     flag = 'only_for_tx_code'
     logger.info('Message to display on console and UI')
-    return render(request, 'view-filtered_ionogram.html', {"users": folder, "base_url": base_url, 'flag': flag, "tx_code": tx_code, "id": id})
+    return render(request, 'view-filtered_ionogram.html', {"users": folder, 'flag': flag, "tx_code": tx_code, "id": id})
 
 
 
 
 def view_ionograms_by_tx_code(request, tx_code, id):
-    base_url = "/home/nishayadav/Myprojects/lfm_va"
     print(tx_code)
 
     conn = create_db_connection()
@@ -289,7 +289,7 @@ def view_ionograms_by_tx_code(request, tx_code, id):
 
             }
         )
-    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, "filtered_data": filter_data, "id": id})
+    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "filtered_data": filter_data, "id": id})
 
 
 def view_filtered_ionograms(request, id):
@@ -308,7 +308,6 @@ def view_filtered_ionograms(request, id):
 
 
 def view_unfiltered_ionograms(request, folder_name):
-    base_url = "/home/nishayadav/Myprojects/lfm_va"
     conn = create_db_connection()
     data = get_unfiltered_ionograms(conn, folder_name)
     page = request.GET.get('page', 1)
@@ -319,7 +318,7 @@ def view_unfiltered_ionograms(request, folder_name):
         data = paginator.page(1)
     except EmptyPage:
         data = paginator.page(paginator.num_pages)
-    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, 'selected_date': folder_name})
+    return render(request, 'view-unfiltered_ionograms.html', {"data": data, 'selected_date': folder_name})
 
 
 def search_by_codes(request):
@@ -327,8 +326,6 @@ def search_by_codes(request):
         tx_code = request.POST['tx_code']
         start_date = request.POST['start_date']
         end_date = request.POST['end_date']
-
-        base_url = "/home/nishayadav/Myprojects/lfm_va"
 
         conn = create_db_connection()
         data = get_search_data(conn, tx_code, start_date, end_date)
@@ -357,7 +354,7 @@ def search_by_codes(request):
                 }
             )
 
-    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "base_url": base_url, "filtered_data": filter_data})
+    return render(request, 'view-unfiltered_ionograms.html', {"data": data, "filtered_data": filter_data})
 
 
 def loginfo(request):

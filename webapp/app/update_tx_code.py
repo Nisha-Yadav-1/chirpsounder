@@ -1,20 +1,6 @@
 import psycopg2
-
-#Name               :               Nisha Yadav
-#Function Name      :               create_db_connection
-#Functionality      :               Create database connection
-
-def create_db_connection():
-    conn_args = {
-            "user": "postgres",
-            "password": "Welcome@123",
-            "host": "127.0.0.1",
-            "port": "5432",
-            "database": "h5db",
-        }
-    conn = psycopg2.connect(**conn_args)
-    
-    return conn
+from .db import create_db_connection
+conn=create_db_connection()
     
 #Name               :               Nisha Yadav
 #Function Name      :               update_virginia_tx_code
@@ -149,11 +135,11 @@ def total_no_ionograms(txcode, conn):
 
     cursor1 = conn.cursor()
     # Total filtered ionograms
-    cursor1.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' != any(tx_code_w2naf)")
+    cursor1.execute("select count(*) from table_lfm_file tlf where tx_code_w2naf is null")
 
     cursor2 = conn.cursor()
     #  Total unfiltered ionograms
-    cursor2.execute(f"select count(*) from table_lfm_file tlf where '{txcode}' = any(tx_code_w2naf)")
+    cursor2.execute("select count(*) from table_lfm_file tlf where %s = any(tx_code_w2naf)", (txcode,))
 
 
     start_date = conn.cursor()
@@ -169,9 +155,9 @@ def total_no_ionograms(txcode, conn):
     folder.update(
     {
     "total_ionograns": x,
-    "total_unclassified": x - total_filtered_ionograms - y,
+    "total_unclassified": x - total_filtered_ionograms,
     "total_filtered":total_filtered_ionograms,
-    "unfiltered": y,
+    "unfiltered": x,
     "start_date":str(st_date),
     "end_date":str(ed_date)
     }

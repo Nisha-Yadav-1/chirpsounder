@@ -33,10 +33,6 @@ from .update_tx_code import create_db_connection, update_tx_code
 rootdir = '/media/nishayadav/Seagate Backup Plus Drive/chirp'
 
 
-# file to be store all lfm files related to virginia
-lfm_vir = "/home/nishayadav/chirpsounder2_django/chirpsounder/webapp/app/static/lfm_va/"
-par_vir = "/home/nishayadav/Myprojects/par_va"
-
 
 # All folders (within the rootdir) named by days of the calendar which has the
 # lfm_files
