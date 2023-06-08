@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+#Extends Dr. Dev Joshi's static method to filter Viginia Cheasapeake Virginia to the extent that is now filtering any transmitter information accross the world by giving dynamic value from the UI only.
 
 # Save files in each of the folders using pickle (multi-frequency) and later
 # load the files to make the plots through another script.

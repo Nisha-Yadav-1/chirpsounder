@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+#author name              :               Nisha Yadav
 
 
 class Chripsounder(models.Model):

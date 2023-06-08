@@ -1,34 +1,37 @@
 <!doctype html>
 <html lang="en">
-  {% load static %}
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reciever Info</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
-  </head>
-  <body>
-    {% include 'menu.html' %}
-    <div class="">
-      <h1 class="text-center mt-5 heading">Ionosonde Locations</h1>
-    </div>
-    <div class="table-format">
-      <table width="100%" class="table m-4">
-        <thead class="table-dark table-bordered">
-          <tr class="text-center">
-            <th scope="col">ID</th>
-            <th scope="col">Name of the Receiver</th>
-            <th scope="col">Latitude</th>
-            <th scope="col">Longitude</th>
-            <th scope="col">Ground Range</th>
-            <th scope="col">Chrip Rate</th>
-            <th scope="col">View Details</th>
-          </tr>
-        </thead>
-        <tbody>
-         
-         <tr class="text-center">
+{% load static %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reciever Info</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+
+<body>
+  {% include 'menu.html' %}
+  <div class="">
+    <h1 class="text-center mt-5 heading">Ionosonde Locations</h1>
+  </div>
+  <div class="table-format">
+    <table width="100%" class="table m-4">
+      <thead class="table-dark table-bordered">
+        <tr class="text-center">
+          <th scope="col">ID</th>
+          <th scope="col">Name of the Receiver</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Ground Range</th>
+          <th scope="col">Chrip Rate</th>
+          <th scope="col">View Details</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class="text-center">
           <td>{{data.id}}</td>
           <td>{{data.name_of_receiver}}</td>
           <td>{{data.lat}}</td>
@@ -37,12 +40,15 @@
           <td>{{data.chriprate}}</td>
           <td><a href="{% url 'filter' d.id %}" class="btn btn-success">View</a></td>
         </tr>
-        
-          
-        </tbody>
-      </table>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-  </body>
+
+
+      </tbody>
+    </table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>

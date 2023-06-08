@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="en">
-    {% load static %}
+{% load static %}
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Edit Receiver</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-        <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 
 <body>
@@ -17,44 +18,49 @@
             <div class="col-md-2"></div>
             <div class="col-md-8 transmitter-edit">
                 <h3 class="Ionosonde-list text-center mb-5">Update Receiver</h3>
-        <form method="POST" action="{% url 'edit_receiver' data.id %}">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="exampleInputEmail1">Receiver Name</label>
-                <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded edit-input" name="receiver_name" value="{{data.receiver_name}}" size="40">
-                
-            </div>
+                <form method="POST" action="{% url 'edit_receiver' data.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Receiver Name</label>
+                        <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded edit-input"
+                            name="receiver_name" value="{{data.receiver_name}}" size="40">
 
-            <div class="form-group">
-                <label for="exampleInputEmail1">TX Code</label>
-                <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_code" value="{{data.receiver_code}}">
-                
-            </div>
-            <div class="form-group mt-3">
-                <label for="exampleInputPassword1">Location</label>
-                <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_location" value="{{data.receiver_location}}">
-            </div>
+                    </div>
 
-            <div class="form-group mt-3">
-                <label for="exampleInputPassword1">Latitude</label>
-                <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_lat" value="{{data.receiver_lat}}">
-            </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">TX Code</label>
+                        <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_code"
+                            value="{{data.receiver_code}}">
 
-            <div class="form-group mt-3">
-                <label for="exampleInputPassword1">Longitude</label>
-                <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_long" value="{{data.receiver_long}}">
-            </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="exampleInputPassword1">Location</label>
+                        <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded"
+                            name="receiver_location" value="{{data.receiver_location}}">
+                    </div>
 
-           
+                    <div class="form-group mt-3">
+                        <label for="exampleInputPassword1">Latitude</label>
+                        <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_lat"
+                            value="{{data.receiver_lat}}">
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="exampleInputPassword1">Longitude</label>
+                        <input type="text" class="form-control shadow-sm p-3 mb-5 bg-white rounded" name="receiver_long"
+                            value="{{data.receiver_long}}">
+                    </div>
 
 
-            
-            <div class="text-center">
-            <button type="submit" class="btn custom-button">Submit</button>
 
-            </div>
-            &nbsp;
-        </form>
+
+
+                    <div class="text-center">
+                        <button type="submit" class="btn custom-button">Submit</button>
+
+                    </div>
+                    &nbsp;
+                </form>
             </div>
             <div class="col-md-2"></div>
         </div>

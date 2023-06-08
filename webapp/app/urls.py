@@ -8,6 +8,7 @@ urlpatterns = [
     path("unfilter_ionograms/<str:tx_code>/<int:id>", views.filter_ionograms_by_tx_code,name='unfiltered_ionograms'),
     path("view_ionograms_by_tx_code/<str:tx_code>/<int:id>", views.view_ionograms_by_tx_code,name='view_ionograms_by_tx_code'),
     path("view_filtered_ionograms/<int:id>", views.view_filtered_ionograms, name='view_filtered_ionograms'),
+    path("view_selected_data", views.view_selected_data, name='view_selected_data'),
 
     # api
     path("api/filter-ionograms/<str:folder_name>/<int:id>", views.filter_ionograms_api, name='ionograms_filter'),

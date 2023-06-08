@@ -60,7 +60,7 @@
           <td>{{d.longitude}}</td>
           <td>{{d.range_zero}}</td>
           <td>{{d.chriprate}}</td>
-          <td><a href="{% url 'edit-transmitter' d.tx_code d.id %}" class="btn custom-button">Edit{% bs_icon 'pencil-fill' %} </a>
+          <td><a href="{% url 'edit-transmitter' d.tx_code d.id %}" class="btn custom-button">Edit {% bs_icon 'pencil-fill' %} </a>
             <a href="unfilter_ionograms/{{d.tx_code}}/{{d.id}}" class="btn custom-button">View ionograms</a>
             <a href="ionograms-summary/{{d.tx_code}}/{{d.id}}" class="btn custom-button">Filter Ionogram {% bs_icon 'search' %}</a>
             <!-- <a href="#" class="btn custom-button">Create keogram</a>

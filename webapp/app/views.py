@@ -1,5 +1,6 @@
 import time
 import json
+from .global_url import rootdir
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .update_tx_code import *
@@ -47,23 +48,18 @@ def view_ionograms(request, filename, folder_name, id=None):
     data = Chripsounder.objects.get(id=id)
     files =  get_files_for_previous_next(conn, folder_name, data.tx_code)   
     files = [i[0] for i in files]
-    # lfm_vir = "/home/nishayadav/chirpsounder2_django/chirpsounder/webapp/app/static/lfm_va/*"
-    # files = glob.glob(lfm_vir)
     h5_files = []
     png_files = []
     for file_name in files:
         if file_name.endswith("h5"):
             h5_files.append(file_name)
             png_files.append(f"{'.'.join(file_name.split('.')[0:2])}.png")
-        # else:
-        #     png_files.append(file_name.split("/")[-1])
-            
+ 
 
     filter_data = []
     for i in h5_files:
         
         png_file = i.split(".")[0: 2]
-        # print(f"{'.'.join(png_file[0: 2])}.png")
         if f"{'.'.join(png_file[0: 2])}.png" in png_files:
             filter_data.append(f"{'.'.join(png_file[0: 2])}.png")
     for_previous = []
@@ -94,12 +90,12 @@ def filter_ionograms_api(request, folder_name, id):
         time.sleep(5)
         conn = create_db_connection()
         data = Chripsounder.objects.filter(id=int(id)).values()[0]
-        files = list(get_virginia_lfm_ionograms(conn, folder_name))
+        files = list(get_lfm_ionograms(conn, folder_name))
         if len(files) > 0:
             files = files
         else:
             filter_ionogram.creating_data_file(data, folder_name)
-        files = list(get_virginia_lfm_ionograms_api(conn, folder_name))
+        files = list(get_lfm_ionograms_api(conn, folder_name))
         json_data = {"data": files}
         if len(json_data):
             return Response(json_data)
@@ -116,12 +112,12 @@ def event_stream():
 def filter_ionograms(request, folder_name, id):
     conn = create_db_connection()
     data = Chripsounder.objects.filter(id=int(id)).values()[0]
-    files = list(get_virginia_lfm_ionograms(conn, folder_name))
+    files = list(get_lfm_ionograms(conn, folder_name))
     if len(files) > 0:
         files = files
     else:
         filter_ionogram.creating_data_file(data, folder_name)
-    files = list(get_virginia_lfm_ionograms(conn, folder_name))
+    files = list(get_lfm_ionograms(conn, folder_name))
     return render(request, 'filter_ionogram.html', {"data": files, "name": data, "date": folder_name, "id": id})
 
 
@@ -238,7 +234,6 @@ def get_folder_name(path):
     return {"folder_name": path.split("/")[-1]}
 
 
-rootdir = '/media/nishayadav/Seagate Backup Plus Drive/chirp/*'
 
 
 def unfiltered_ionograms(request):
@@ -276,7 +271,6 @@ def filter_ionograms_by_tx_code(request, tx_code, id):
 
 
 def view_ionograms_by_tx_code(request, tx_code, id):
-    print(tx_code)
 
     conn = create_db_connection()
     data = get_search_data(conn, tx_code, start_date=None, end_date=None)
@@ -304,7 +298,65 @@ def view_filtered_ionograms(request, id):
         users = paginator.page(1)
     except EmptyPage:
         users = paginator.page(paginator.num_pages)
+
     return render(request, 'view-filtered_ionogram.html', {"users": users, "id": id})
+
+
+def view_selected_data(request):
+    conn = create_db_connection()
+    st = []
+    ed = []
+    if request.method == 'POST':
+        id = request.POST['id']
+        start_date = request.POST['start_date']
+        end_date = request.POST['end_date']
+        data = view_selected_datas(conn, start_date, end_date)
+
+        request.session['id'] = id
+        request.session['start_date'] = start_date
+        request.session['end_date'] = end_date
+
+        page = request.GET.get('page', 1)
+
+        paginator = Paginator(data, 400)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+
+
+        res =  render(request, 'view-filtered_ionogram.html', {"users": users, "id": id})
+        res.set_cookie('id', id)
+        res.set_cookie('start_date', start_date)
+        res.set_cookie('end_date', end_date)
+
+        return res
+    
+
+    else:
+
+        id = request.COOKIES['id']
+        start_date = request.COOKIES['start_date']
+        end_date = request.COOKIES['end_date']
+
+        data = view_selected_datas(conn, start_date, end_date)
+        st.append(start_date)
+        ed.append(end_date)
+        page = request.GET.get('page', 1)
+
+        paginator = Paginator(data, 400)
+        try:
+            users = paginator.page(page)
+        except PageNotAnInteger:
+            users = paginator.page(1)
+        except EmptyPage:
+            users = paginator.page(paginator.num_pages)
+        return render(request, 'view-filtered_ionogram.html', {"users": users, "id": id})
+
+
+
 
 
 def view_unfiltered_ionograms(request, folder_name):
@@ -372,9 +424,7 @@ def total_number_ionograms(request, tx_code, id):
 def ionograms_details_from_summary(request, flag, id):
     conn = create_db_connection()
     data = Chripsounder.objects.filter(id=int(id)).values()[0]
-    print("data", data)
     files = list(get_ionograms_after_summary(conn, flag))
-    print("files", files)
     page = request.GET.get('page', 1)
 
     paginator = Paginator(files, 70)

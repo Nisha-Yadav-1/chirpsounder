@@ -74,21 +74,28 @@
   </div>
 
 
-  <div class="col-xl-6 offset-xl-3 mt-5">
-    <label for="exampleFormControlInput1" class="form-label">Start Date:</label>
-    <input type="date" class="form-control shadow-none" name="start_date" placeholder="Start Date" id="start_date"
-      value={{data.start_date}} required>
+  <form action="/view_selected_data" method="POST">
+    {% csrf_token %}
 
+    <input type="hidden" value={{id}} name="id">
 
+    <div class="col-xl-6 offset-xl-3 mt-5">
+      <label for="exampleFormControlInput1" class="form-label">Start Date:</label>
+      <input type="date" class="form-control shadow-none" name="start_date" placeholder="Start Date" id="start_date"
+        value={{data.start_date}} required>
+  
+  
+  
+      <div class="mb-5">
+        <label for="exampleFormControlInput1" class="form-label">End Date:</label>
+        <input type="date" class="form-control shadow-none" name="end_date" id="end_date" placeholder="End Date"
+          value="{{data.end_date}}" required>
+      </div>
+      <button type="submit"
+      class="btn custom-button text-center shadow-none mt-2"> Start Processing</button>
+  </form>
 
-    <div class="mb-5">
-      <label for="exampleFormControlInput1" class="form-label">End Date:</label>
-      <input type="date" class="form-control shadow-none" name="end_date" id="end_date" placeholder="End Date"
-        value="{{data.end_date}}" required>
-    </div>
-
-    <a href="{% url 'view_filtered_ionograms' id %}" type="submit"
-      class="btn custom-button text-center shadow-none mt-2"> Start Processing</a>
+    
     <button type="reset" id="end_date" class="btn custom-button text-center shadow-none mt-2" data-toggle="modal"
       data-target="#exampleModalCenter"> Clear Classifications</button>
   </div>
